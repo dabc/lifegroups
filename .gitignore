@@ -1,0 +1,9 @@
+# Dependency directories
+node_modules
+bower_components
+
+# Editor files
+.idea
+
+# Bin
+bin
