@@ -38,8 +38,10 @@ gulp.task('app', function () {
     gulp.src(paths.scripts)
         .pipe(concat('app.js'))
         .pipe(gulp.dest('public/javascripts'));
+});
 
-    gulp.src(paths.html)
+gulp.task('html', function () {
+	gulp.src(paths.html)
         .pipe(gulp.dest('public'));
 });
 
@@ -84,7 +86,7 @@ gulp.task('watch', function(){
 });
 
 // build
-gulp.task('build', ['vendor', 'app', 'less', 'lint']);
+gulp.task('build', ['vendor', 'app', 'html', 'less', 'lint']);
 
 // default gulp task
 gulp.task('default', ['build', 'serve', 'watch']);
