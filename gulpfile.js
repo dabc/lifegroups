@@ -8,9 +8,9 @@ var gulp = require('gulp'),
     livereload = require('gulp-livereload');
 
 var paths = {
-    styles: ['./client/stylesheets/*.less'],
-    scripts: ['./client/app/**/*.js'],
-    html: ['./client/app/**/*.html'],
+    styles: ['./app/styles/*.less'],
+    scripts: ['./app/**/*.js'],
+    html: ['./app/**/*.html'],
     tests: ['./tests/*.js']
 };
 
@@ -25,12 +25,12 @@ gulp.task('vendor', function () {
 
     gulp.src(mbf({ filter: cssRegex }))
         .pipe(concat('vendor.css'))
-        .pipe(gulp.dest('public/stylesheets'));
+        .pipe(gulp.dest('public/styles'));
 
     // accommodate bootstrap css source mapping
     gulp.src('./bower_components/**/bootstrap.css.map')
         .pipe(concat('bootstrap.css.map'))
-        .pipe(gulp.dest('public/stylesheets'));
+        .pipe(gulp.dest('public/styles'));
 });
 
 // app
@@ -47,7 +47,7 @@ gulp.task('app', function () {
 gulp.task('less', function () {
     return gulp.src(paths.styles)
         .pipe(less())
-        .pipe(gulp.dest('public/stylesheets/'));
+        .pipe(gulp.dest('public/styles'));
 });
 
 // code linting
