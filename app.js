@@ -8,6 +8,8 @@ var exphbs = require('express-handlebars');
 
 var routes = require('./routes/index');
 
+var api = require('./routes/api');
+
 var app = express();
 
 // view engine setup
@@ -29,9 +31,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-
-// vendor files
-app.use('/bower_components',  express.static(__dirname + '/bower_components'));
+app.use('/api', api);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
