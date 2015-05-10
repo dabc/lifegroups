@@ -11,6 +11,7 @@ var paths = {
     styles: ['./app/styles/*.less'],
     scripts: ['./app/**/*.js'],
     html: ['./app/**/*.html'],
+    images: ['./app/images/**/*.jpg','./app/images/**/*.png'],
     tests: ['./tests/*.js']
 };
 
@@ -51,6 +52,11 @@ gulp.task('app', function () {
 gulp.task('html', function () {
 	gulp.src(paths.html)
         .pipe(gulp.dest('public'));
+});
+
+gulp.task('images', function () {
+    gulp.src(paths.images)
+        .pipe(gulp.dest('public/images'));
 });
 
 // styles
@@ -94,7 +100,7 @@ gulp.task('watch', function(){
 });
 
 // build
-gulp.task('build', ['vendor', 'app', 'html', 'less', 'lint']);
+gulp.task('build', ['vendor', 'app', 'html', 'images', 'less', 'lint']);
 
 // default gulp task
 gulp.task('default', ['build', 'serve', 'watch']);
