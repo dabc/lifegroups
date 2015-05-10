@@ -1,9 +1,12 @@
 angular.module('lgApp').controller('homeController', function ($scope, lgService) {
     'use strict';
 
-    $scope.json = '';
+    $scope.lifegroups = [];
+    $scope.content = '';
 
-    lgService.getLifegroups().then(function (data) {
-        $scope.json = data;
+    lgService.getLifegroups().then(function (lifegroups) {
+        $scope.lifegroups = lifegroups.groups;
+        $scope.content = lifegroups.home.content;
+
     });
 });

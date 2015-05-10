@@ -17,7 +17,9 @@ var paths = {
 // vendor
 gulp.task('vendor', function () {
     var jsRegex = (/.*\.js$/i),
-        cssRegex = (/.*\.css$/i);
+        cssRegex = (/.*\.css$/i),
+        woffRegex = (/.*\.woff$/i),
+        ttfRegex = (/.*\.ttf$/i);
 
 	gulp.src(mbf({ filter: jsRegex }))
         .pipe(concat('vendor.js'))
@@ -25,6 +27,12 @@ gulp.task('vendor', function () {
 
     gulp.src(mbf({ filter: cssRegex }))
         .pipe(concat('vendor.css'))
+        .pipe(gulp.dest('public/styles'));
+
+    gulp.src(mbf({ filter: woffRegex }))
+        .pipe(gulp.dest('public/styles'));
+
+    gulp.src(mbf({ filter: ttfRegex }))
         .pipe(gulp.dest('public/styles'));
 
     // accommodate bootstrap css source mapping

@@ -5,7 +5,8 @@
         'ngCookies',
         'ngResource',
         'ngSanitize',
-        'ngRoute'
+        'ngRoute',
+        'ui.grid'
     ]);
 
     app.config(function($routeProvider) {
