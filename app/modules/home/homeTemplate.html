@@ -1,6 +1,11 @@
 <div class="row">
     <div class="col-xs-12">
-        <div ng-bind-html="content"></div>
-        <div ui-grid="gridOptions" class="lg-grid"></div>
+        <div ng-if="!contentReady" class="text-center">
+            <h2 class="fa fa-circle-o-notch fa-spin fa-5x"></h2>
+        </div>
+        <div ng-if="contentReady">
+            <div ng-bind-html="content"></div>
+            <div ui-grid="gridOptions" class="lg-grid"></div>
+        </div>
     </div>
 </div>

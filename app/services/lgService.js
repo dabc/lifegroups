@@ -14,7 +14,7 @@
                     if (page.custom_fields.isLifegroup) {
                         lifegroups.groups.push(page);
                     }
-                    if (page.custom_fields.lgHome) {
+                    if (page.custom_fields.lgIsHome) {
                         lifegroups.home = page;
                     }
                 });

@@ -1,3 +1,5 @@
+@import '../../bower_components/bootstrap/less/variables.less';
+
 /* app styles */
 body, html {
   background: url('/images/background_repeat.jpg') repeat-x;
@@ -21,13 +23,15 @@ body, html {
   nav {
     margin: 20px 0;
   }
-
-  .view {
-    height: 100%;
-  }
 }
 
 .lg-grid {
   width: auto;
   height: auto;
+}
+
+@media(min-width: @screen-sm) {
+  .view {
+    min-height: 600px;
+  }
 }

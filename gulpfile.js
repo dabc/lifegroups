@@ -20,6 +20,7 @@ gulp.task('vendor', function () {
     var jsRegex = (/.*\.js$/i),
         cssRegex = (/.*\.css$/i),
         woffRegex = (/.*\.woff$/i),
+        woff2Regex = (/.*\.woff2$/i),
         ttfRegex = (/.*\.ttf$/i);
 
 	gulp.src(mbf({ filter: jsRegex }))
@@ -31,10 +32,13 @@ gulp.task('vendor', function () {
         .pipe(gulp.dest('public/styles'));
 
     gulp.src(mbf({ filter: woffRegex }))
-        .pipe(gulp.dest('public/styles'));
+        .pipe(gulp.dest('public/fonts'));
+
+    gulp.src(mbf({ filter: woff2Regex }))
+        .pipe(gulp.dest('public/fonts'));
 
     gulp.src(mbf({ filter: ttfRegex }))
-        .pipe(gulp.dest('public/styles'));
+        .pipe(gulp.dest('public/fonts'));
 
     // accommodate bootstrap css source mapping
     gulp.src('./bower_components/**/bootstrap.css.map')
