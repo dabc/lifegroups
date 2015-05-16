@@ -9,4 +9,11 @@ router.get('/lifegroups', function (req, res) {
     });
 });
 
+router.get('/lifegroup/:slug', function (req, res) {
+    request.get(baseUrl + '/get_page/?slug=lifegroups/' + req.params.slug, function (err, response, body) {
+        console.log(body);
+        res.json(body);
+    });
+});
+
 module.exports = router;

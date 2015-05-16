@@ -4,6 +4,7 @@ angular.module('lgApp').directive('lifegroup', function() {
     return {
         restrict: 'E',
         templateUrl: 'modules/lifegroup/lifegroupTemplate.html',
-        controller: 'lifegroupController'
+        controller: 'lifegroupController',
+        scope: {}
     };
 });

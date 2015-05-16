@@ -6,7 +6,8 @@
         'ngResource',
         'ngSanitize',
         'ngRoute',
-        'ui.grid'
+        'ui.grid',
+        'ui.grid.selection'
     ]);
 
     app.config(function($routeProvider) {
@@ -15,7 +16,7 @@
                 controller: 'homeController',
                 templateUrl: 'modules/home/homeTemplate.html'
             })
-            .when('/lifegroup', {
+            .when('/lifegroup/:slug', {
                 controller: 'lifegroupController',
                 templateUrl: 'modules/lifegroup/lifegroupTemplate.html'
             })

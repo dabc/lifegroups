@@ -1,6 +1,9 @@
-<h1>Lifegroup</h1>
-<div class="row">
-    <div class="col-xs-12">
-        <a href="#/">Home</a>
-    </div>
+<div ng-if="!contentReady" class="text-center">
+    <h2 class="fa fa-circle-o-notch fa-spin fa-5x"></h2>
+    <h2>Loading</h2>
+</div>
+<div ng-if="contentReady">
+    <h1>{{ lifegroup.title }}</h1>
+    <div ng-bind-html="lifegroup.content"></div>
+    <button class="btn btn-primary btn-sm" ng-click="navigateHome()"><i class="fa fa-arrow-left"></i> Return to List</button>
 </div>

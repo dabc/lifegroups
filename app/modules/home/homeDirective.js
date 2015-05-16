@@ -4,6 +4,7 @@ angular.module('lgApp').directive('home', function() {
     return {
         restrict: 'E',
         templateUrl: 'modules/home/homeTemplate.html',
-        controller: 'homeController'
+        controller: 'homeController',
+        scope: {}
     };
 });
