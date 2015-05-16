@@ -6,6 +6,18 @@ body, html {
   height: 100%;
 }
 
+h2.title {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+  padding: 0;
+}
+
+.navbar {
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+}
+
 .container {
   height: 100%;
 }
@@ -22,6 +34,25 @@ body, html {
 
   nav {
     margin: 20px 0;
+
+    ul {
+      li {
+        text-transform: uppercase;
+        margin: 0 5px;
+        font-family: "Open Sans", Helvetica, Arial, sans-serif;
+        font-size: 12px;
+
+        a {
+          color: #636363;
+          padding: 10px;
+
+          &:hover {
+            text-decoration: none;
+            background: #ccc!important;
+          }
+        }
+      }
+    }
   }
 }
 
@@ -29,11 +60,13 @@ body, html {
   width: auto;
   height: auto;
 
-  .ui-grid-cell-contents {
-    cursor: pointer;
-
+  .ui-grid-row {
     &:hover {
-      background: #ffffcc;
+      .ui-grid-cell-contents {
+        cursor: pointer;
+        background: @btn-primary-bg;
+        color: white;
+      }
     }
   }
 }
@@ -41,5 +74,18 @@ body, html {
 @media(min-width: @screen-sm) {
   .view {
     min-height: 600px;
+  }
+
+  nav {
+    .navbar-nav {
+      margin-left: -30px;
+    }
+    ul {
+      li {
+        a {
+          margin-top: 4px;
+        }
+      }
+    }
   }
 }
