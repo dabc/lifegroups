@@ -1,15 +1,16 @@
 angular.module('lgApp').service('lgService', function ($http) {
     'use strict';
 
-    var currLifegroup = {};
+    var baseUrl = 'http://daytonave.org/api',
+        currLifegroup = {};
 
     this.getLifegroups = function () {
         var lifegroups = {
                 home: {},
                 groups: []
             };
-        return $http.get('/api/lifegroups').then(function (res) {
-            var pages = JSON.parse(res.data);
+        return $http.get(baseUrl + '/get_posts/?post_type=page').then(function (res) {
+            var pages = res.data;
             _.forEach(pages.posts, function (page) {
                 if (page.custom_fields.isLifegroup) {
                     lifegroups.groups.push(page);
@@ -23,6 +24,6 @@ angular.module('lgApp').service('lgService', function ($http) {
     };
 
     this.getLifegroupBySlug = function (slug) {
-        return $http.get('/api/lifegroup/' + slug);
+        return $http.get(baseUrl + '/get_page/?slug=lifegroups/' + slug);
     };
 });

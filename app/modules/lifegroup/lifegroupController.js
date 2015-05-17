@@ -5,7 +5,7 @@ angular.module('lgApp').controller('lifegroupController', function ($scope, $rou
     $scope.contentReady = false;
 
     lgService.getLifegroupBySlug($routeParams.slug).then(function (lifegroup) {
-        $scope.lifegroup = JSON.parse(lifegroup.data).page;
+        $scope.lifegroup = lifegroup.data.page;
         $scope.contentReady = true;
     });
 

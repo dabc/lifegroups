@@ -5,7 +5,10 @@ var gulp = require('gulp'),
     jshint = require('gulp-jshint'),
     karma = require('karma').server,
     nodemon = require('gulp-nodemon'),
-    livereload = require('gulp-livereload');
+    livereload = require('gulp-livereload'),
+    handlebars = require('gulp-compile-handlebars'),
+    rename = require('gulp-rename'),
+    fs = require('fs');
 
 var paths = {
     styles: ['./app/styles/*.less'],
@@ -32,13 +35,13 @@ gulp.task('vendor', function () {
         .pipe(gulp.dest('public/styles'));
 
     gulp.src(mbf({ filter: woffRegex }))
-        .pipe(gulp.dest('public/fonts'));
+        .pipe(gulp.dest('public/styles'));
 
     gulp.src(mbf({ filter: woff2Regex }))
-        .pipe(gulp.dest('public/fonts'));
+        .pipe(gulp.dest('public/styles'));
 
     gulp.src(mbf({ filter: ttfRegex }))
-        .pipe(gulp.dest('public/fonts'));
+        .pipe(gulp.dest('public/styles'));
 
     // accommodate bootstrap css source mapping
     gulp.src('./bower_components/**/bootstrap.css.map')
@@ -86,6 +89,21 @@ gulp.task('test', function (done) {
     }, done);
 });
 
+gulp.task('compile', function () {
+    var templateData = {
+            title: 'Lifegroups',
+            body: fs.readFileSync('views/index.handlebars', 'utf-8')
+        };
+
+    gulp.src('public/**/*')
+        .pipe(gulp.dest('dist'));
+
+    return gulp.src('views/layouts/main.handlebars')
+        .pipe(handlebars(templateData))
+        .pipe(rename('index.html'))
+        .pipe(gulp.dest('dist'));
+});
+
 // dev server
 gulp.task('serve', function (){
     nodemon({
@@ -105,6 +123,9 @@ gulp.task('watch', function(){
 
 // build
 gulp.task('build', ['vendor', 'app', 'html', 'images', 'less', 'lint']);
+
+// deploy
+gulp.task('deploy', ['build', 'compile']);
 
 // default gulp task
 gulp.task('default', ['build', 'serve', 'watch']);
