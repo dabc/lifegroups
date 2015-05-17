@@ -12,12 +12,6 @@ h2.title {
   padding: 0;
 }
 
-.navbar {
-  border-radius: 0;
-  border-left: none;
-  border-right: none;
-}
-
 .container {
   height: 100%;
 }
@@ -34,25 +28,6 @@ h2.title {
 
   nav {
     margin: 20px 0;
-
-    ul {
-      li {
-        text-transform: uppercase;
-        margin: 0 5px;
-        font-family: "Open Sans", Helvetica, Arial, sans-serif;
-        font-size: 12px;
-
-        a {
-          color: #636363;
-          padding: 10px;
-
-          &:hover {
-            text-decoration: none;
-            background: #ccc!important;
-          }
-        }
-      }
-    }
   }
 }
 
@@ -72,20 +47,11 @@ h2.title {
 }
 
 @media(min-width: @screen-sm) {
-  .view {
-    min-height: 600px;
+  .content {
+    box-shadow: 0 2px 6px rgba(100, 100, 100, 0.3);
   }
 
-  nav {
-    .navbar-nav {
-      margin-left: -30px;
-    }
-    ul {
-      li {
-        a {
-          margin-top: 4px;
-        }
-      }
-    }
+  .view {
+    min-height: 600px;
   }
 }
