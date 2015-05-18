@@ -48,4 +48,9 @@ angular.module('lgApp').controller('homeController', function ($scope, $location
             $location.path('/lifegroup/' + row.entity.slug);
         });
     };
+
+    $scope.$watch('contentReady', function (value) {
+        if (value)
+            $('.lg-grid-container').css({'visibility': 'visible'});
+    });
 });
