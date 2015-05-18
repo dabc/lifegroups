@@ -8,62 +8,67 @@ var gulp = require('gulp'),
     livereload = require('gulp-livereload'),
     handlebars = require('gulp-compile-handlebars'),
     rename = require('gulp-rename'),
-    fs = require('fs');
+    fs = require('fs'),
+    del = require('del');
 
 var paths = {
     styles: ['./app/styles/*.less'],
     scripts: ['./app/**/*.js'],
     html: ['./app/**/*.html'],
-    images: ['./app/images/**/*.jpg','./app/images/**/*.png'],
+    uigrid: ['./bower_components/angular-ui-grid/*.woff','./bower_components/angular-ui-grid/*.ttf','./bower_components/angular-ui-grid/*.svg','./bower_components/angular-ui-grid/*.eot'],
+    fontawesome: ['./bower_components/fontawesome/fonts/**'],
     tests: ['./tests/*.js']
 };
 
+gulp.task('clean', function (cb) {
+    // You can use multiple globbing patterns as you would with `gulp.src`
+    del(['public/**/*','dist/**/*'], cb);
+});
+
 // vendor
 gulp.task('vendor', function () {
-    var jsRegex = (/.*\.js$/i),
-        cssRegex = (/.*\.css$/i),
-        woffRegex = (/.*\.woff$/i),
-        woff2Regex = (/.*\.woff2$/i),
-        ttfRegex = (/.*\.ttf$/i);
+    var jsRegex = (/.*\.js$/i);
 
-	gulp.src(mbf({ filter: jsRegex }))
+	return gulp.src(mbf({ filter: jsRegex }))
         .pipe(concat('vendor.js'))
         .pipe(gulp.dest('public/javascripts'));
+});
 
-    gulp.src(mbf({ filter: cssRegex }))
-        .pipe(concat('vendor.css'))
-        .pipe(gulp.dest('public/styles'));
-
-    gulp.src(mbf({ filter: woffRegex }))
-        .pipe(gulp.dest('public/styles'));
-
-    gulp.src(mbf({ filter: woff2Regex }))
-        .pipe(gulp.dest('public/styles'));
-
-    gulp.src(mbf({ filter: ttfRegex }))
-        .pipe(gulp.dest('public/styles'));
-
+gulp.task('bsmap', function () {
     // accommodate bootstrap css source mapping
-    gulp.src('./bower_components/**/bootstrap.css.map')
+    return gulp.src('./bower_components/**/bootstrap.css.map')
         .pipe(concat('bootstrap.css.map'))
         .pipe(gulp.dest('public/styles'));
 });
 
+gulp.task('styles', function () {
+    var cssRegex = (/.*\.css$/i);
+
+    return gulp.src(mbf({ filter: cssRegex }))
+        .pipe(concat('vendor.css'))
+        .pipe(gulp.dest('public/styles'));
+});
+
+gulp.task('fonts:uigrid', function () {
+    return gulp.src(paths.uigrid)
+        .pipe(gulp.dest('public/styles'));
+});
+
+gulp.task('fonts:fontawesome', function () {
+    return gulp.src(paths.fontawesome)
+        .pipe(gulp.dest('public/fonts'));
+});
+
 // app
 gulp.task('app', function () {
-    gulp.src(paths.scripts)
+    return gulp.src(paths.scripts)
         .pipe(concat('app.js'))
         .pipe(gulp.dest('public/javascripts'));
 });
 
 gulp.task('html', function () {
-	gulp.src(paths.html)
+	return gulp.src(paths.html)
         .pipe(gulp.dest('public'));
-});
-
-gulp.task('images', function () {
-    gulp.src(paths.images)
-        .pipe(gulp.dest('public/images'));
 });
 
 // styles
@@ -89,11 +94,32 @@ gulp.task('test', function (done) {
     }, done);
 });
 
-gulp.task('compile', function () {
+// dev server
+gulp.task('serve', function () {
+    nodemon({
+        script: 'app.js',
+        env: { 'NODE_ENV': 'development' }
+    });
+});
+
+// watch files and livereload
+gulp.task('watch', function () {
+    gulp.watch(paths.html, ['html']);
+    gulp.watch(paths.scripts, ['lint', 'app']);
+    gulp.watch(paths.styles, ['less']);
+    livereload.listen();
+    gulp.watch('public/**').on('change', livereload.changed);
+});
+
+// build
+gulp.task('build', ['vendor', 'styles', 'bsmap', 'fonts:uigrid', 'fonts:fontawesome', 'app', 'html', 'less', 'lint']);
+
+// deploy
+gulp.task('deploy', ['build'], function () {
     var templateData = {
-            title: 'Lifegroups',
-            body: fs.readFileSync('views/index.handlebars', 'utf-8')
-        };
+        title: 'Lifegroups',
+        body: fs.readFileSync('views/index.handlebars', 'utf-8')
+    };
 
     gulp.src('public/**/*')
         .pipe(gulp.dest('dist'));
@@ -103,29 +129,6 @@ gulp.task('compile', function () {
         .pipe(rename('index.html'))
         .pipe(gulp.dest('dist'));
 });
-
-// dev server
-gulp.task('serve', function (){
-    nodemon({
-        script: 'app.js',
-        env: { 'NODE_ENV': 'development' }
-    });
-});
-
-// watch files and livereload
-gulp.task('watch', function(){
-    gulp.watch(paths.html, ['html']);
-    gulp.watch(paths.scripts, ['lint', 'app']);
-    gulp.watch(paths.styles, ['less']);
-    livereload.listen();
-    gulp.watch('public/**').on('change', livereload.changed);
-});
-
-// build
-gulp.task('build', ['vendor', 'app', 'html', 'images', 'less', 'lint']);
-
-// deploy
-gulp.task('deploy', ['build', 'compile']);
 
 // default gulp task
 gulp.task('default', ['build', 'serve', 'watch']);
