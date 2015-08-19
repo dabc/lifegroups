@@ -1,6 +1,12 @@
 angular.module('lgApp').controller('homeController', function ($scope, $location, lgService, uiGridConstants, lgConfig) {
     'use strict';
 
+    var tmpLifegroups = {},
+        localLifegroups = window.localStorage.getItem('lifegroups');
+
+    $scope.lifegroups = [];
+    $scope.contentReady = false;
+
     $scope.gridOptions = {
         enableRowSelection: true,
         enableRowHeaderSelection: false,
@@ -15,14 +21,17 @@ angular.module('lgApp').controller('homeController', function ($scope, $location
             { field: 'time', enableFiltering: false },
             { field: 'campus', enableFiltering: false }
         ],
-        data: []
+        data: [],
+        onRegisterApi: function (gridApi) {
+            //set gridApi on scope
+            $scope.gridApi = gridApi;
+            gridApi.selection.on.rowSelectionChanged($scope, function (row) {
+                $location.path('/lifegroup/' + row.entity.slug);
+            })
+        }
     };
 
-    $scope.lifegroups = [];
-    $scope.contentReady = false;
-
-    lgService.getLifegroups().then(function (lifegroups) {
-        $scope.lifegroups = lifegroups;
+    var formatData = function () {
         _.forEach($scope.lifegroups, function (group) {
             var ages = _.result(_.find(lgConfig.agesArr, { 'min': parseInt(group.custom_fields.lgAgeMin), 'max': parseInt(group.custom_fields.lgAgeMax) }), 'title'),
                 timeStr = group.custom_fields.lgStartTime[0].split(':')[0].length > 1 ? '1970-01-01T' + group.custom_fields.lgStartTime[0] : '1970-01-01T0' + group.custom_fields.lgStartTime[0];
@@ -36,16 +45,45 @@ angular.module('lgApp').controller('homeController', function ($scope, $location
                 slug: group.slug
             });
         });
-        $scope.contentReady = true;
-    });
+    };
 
-    $scope.gridOptions.onRegisterApi = function (gridApi) {
-        //set gridApi on scope
-        $scope.gridApi = gridApi;
-        gridApi.selection.on.rowSelectionChanged($scope, function (row) {
-            $location.path('/lifegroup/' + row.entity.slug);
+    var getLifegroups = function () {
+        lgService.getLifegroups().then(function (lifegroups) {
+            $scope.lifegroups = lifegroups;
+            var data = {
+                timeStamp: moment.utc().toDate(),
+                data: lifegroups
+            };
+            window.localStorage.setItem('lifegroups', JSON.stringify(data));
+            formatData();
+            $scope.contentReady = true;
         });
     };
+
+    if (localLifegroups) {
+        try {
+            tmpLifegroups = JSON.parse(localLifegroups);
+            var duration = moment.utc().diff(moment.utc(tmpLifegroups.timeStamp));
+            if (moment.duration(duration).asMinutes() > 15) {
+                console.log('More than 15 minutes has passed since retrieving data. Retrieve from API instead.');
+                window.localStorage.removeItem('lifegroups');
+                getLifegroups();
+            } else {
+                $scope.lifegroups = tmpLifegroups.data;
+                console.log('lifegroups retrieved from local storage');
+            }
+            formatData();
+        } catch (error) {
+            console.log('Error parsing lifegroups. Retrieving from API');
+            window.localStorage.removeItem('lifegroups');
+            getLifegroups();
+        } finally {
+            $scope.contentReady = true;
+        }
+    } else {
+        console.log('lifegroups retrieved from API');
+        getLifegroups();
+    }
 
     $scope.$watch('contentReady', function (value) {
         if (value)
