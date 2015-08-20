@@ -27,7 +27,7 @@ angular.module('lgApp').controller('homeController', function ($scope, $location
             $scope.gridApi = gridApi;
             gridApi.selection.on.rowSelectionChanged($scope, function (row) {
                 $location.path('/lifegroup/' + row.entity.slug);
-            })
+            });
         }
     };
 
@@ -84,9 +84,4 @@ angular.module('lgApp').controller('homeController', function ($scope, $location
         console.log('lifegroups retrieved from API');
         getLifegroups();
     }
-
-    $scope.$watch('contentReady', function (value) {
-        if (value)
-            $('.lg-grid-container').css({'visibility': 'visible'});
-    });
 });
