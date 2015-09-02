@@ -1,8 +1,8 @@
-angular.module('lgApp').controller('homeController', function ($scope, $location, lgService, uiGridConstants, lgConfig) {
+angular.module('lgApp').controller('homeController', function ($scope, $location, lgService, uiGridConstants, lgConfig, localStorage) {
     'use strict';
 
     var tmpLifegroups = {},
-        localLifegroups = window.localStorage.getItem('lifegroups');
+        localLifegroups = localStorage.getItem('lifegroups');
 
     $scope.lifegroups = [];
     $scope.contentReady = false;
@@ -54,7 +54,7 @@ angular.module('lgApp').controller('homeController', function ($scope, $location
                 timeStamp: moment.utc().toDate(),
                 data: lifegroups
             };
-            window.localStorage.setItem('lifegroups', JSON.stringify(data));
+            localStorage.setItem('lifegroups', JSON.stringify(data));
             formatData();
             $scope.contentReady = true;
         });
@@ -66,7 +66,7 @@ angular.module('lgApp').controller('homeController', function ($scope, $location
             var duration = moment.utc().diff(moment.utc(tmpLifegroups.timeStamp));
             if (moment.duration(duration).asMinutes() > 15) {
                 console.log('More than 15 minutes has passed since retrieving data. Retrieve from API instead.');
-                window.localStorage.removeItem('lifegroups');
+                localStorage.removeItem('lifegroups');
                 getLifegroups();
             } else {
                 $scope.lifegroups = tmpLifegroups.data;
@@ -75,7 +75,7 @@ angular.module('lgApp').controller('homeController', function ($scope, $location
             formatData();
         } catch (error) {
             console.log('Error parsing lifegroups. Retrieving from API');
-            window.localStorage.removeItem('lifegroups');
+            localStorage.removeItem('lifegroups');
             getLifegroups();
         } finally {
             $scope.contentReady = true;

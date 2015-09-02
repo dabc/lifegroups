@@ -23,5 +23,6 @@
             .otherwise({
                 redirectTo: '/'
             });
-    });
+    })
+    .value('localStorage', window.localStorage);
 }());
