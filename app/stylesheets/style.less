@@ -1,0 +1,18 @@
+@import '../../bower_components/bootstrap/less/variables.less';
+
+/* app styles */
+.lg-grid-container {
+  .lg-grid {
+    width: auto;
+
+    .ui-grid-row {
+      &:hover {
+        .ui-grid-cell-contents {
+          cursor: pointer;
+          background: @btn-primary-bg;
+          color: white;
+        }
+      }
+    }
+  }
+}

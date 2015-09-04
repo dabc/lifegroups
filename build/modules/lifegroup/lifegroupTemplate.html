@@ -1,0 +1,9 @@
+<div ng-show="!contentReady" class="text-center">
+    <i class="fa fa-circle-o-notch fa-spin fa-5x"></i>
+    <h2>Loading</h2>
+</div>
+<div ng-show="contentReady">
+    <h2 class="title">{{ lifegroup.title }}</h2>
+    <div ng-bind-html="lifegroup.content"></div>
+    <button class="btn btn-primary btn-sm" ng-click="navigateHome()"><i class="fa fa-arrow-left"></i> Return to List</button>
+</div>

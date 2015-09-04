@@ -1,9 +1,11 @@
-angular.module('lgApp').directive('lgNavigation', function () {
+(function () {
     'use strict';
 
-    return {
-        restrict: 'E',
-        templateUrl: 'modules/navigation/navTemplate.html',
-        controller: 'navController'
-    };
-});
+    angular.module('lgApp').directive('lgNavigation', function () {
+        return {
+            restrict: 'E',
+            templateUrl: 'modules/navigation/navTemplate.html',
+            controller: 'navController'
+        };
+    });
+})();

@@ -1,82 +1,98 @@
 var gulp = require('gulp'),
 	concat = require('gulp-concat'),
+    connect = require('gulp-connect'),
 	mbf = require('main-bower-files'),
 	less = require('gulp-less'),
     jshint = require('gulp-jshint'),
     karma = require('karma').server,
-    nodemon = require('gulp-nodemon'),
-    livereload = require('gulp-livereload'),
-    handlebars = require('gulp-compile-handlebars'),
-    rename = require('gulp-rename'),
-    fs = require('fs'),
-    del = require('del');
+    sourcemaps = require('gulp-sourcemaps'),
+    del = require('del'),
+	uglify = require('gulp-uglify'),
+	minifyCss = require('gulp-minify-css'),
+	rename = require('gulp-rename');
 
 var paths = {
-    styles: ['./app/styles/*.less'],
-    scripts: ['./app/**/*.js'],
-    html: ['./app/**/*.html'],
-    uigrid: ['./bower_components/angular-ui-grid/*.woff','./bower_components/angular-ui-grid/*.ttf','./bower_components/angular-ui-grid/*.svg','./bower_components/angular-ui-grid/*.eot'],
-    fontawesome: ['./bower_components/fontawesome/fonts/**'],
+    styles: ['./app/stylesheets/*.less'],
+    scripts: ['./app/modules/**/*.js'],
+    html: ['./app/modules/**/*.html'],
     tests: ['./tests/*.js']
 };
 
-gulp.task('clean', function (cb) {
-    // You can use multiple globbing patterns as you would with `gulp.src`
-    del(['public/**/*','dist/**/*'], cb);
+// clean
+gulp.task('clean', function () {
+    return del([
+        './build/**/*'
+    ]);
 });
 
-// vendor
-gulp.task('vendor', function () {
-    var jsRegex = (/.*\.js$/i);
-
+// vendor scripts
+gulp.task('vendor-js', ['clean'], function () {
+	var jsRegex = (/.*\.js$/i);
 	return gulp.src(mbf({ filter: jsRegex }))
+		.pipe(sourcemaps.init())
         .pipe(concat('vendor.js'))
-        .pipe(gulp.dest('public/javascripts'));
+		//.pipe(uglify())
+		//.pipe(rename({ suffix: '.min' }))
+		.pipe(sourcemaps.write())
+        .pipe(gulp.dest('./build/scripts'));
 });
 
-gulp.task('bsmap', function () {
-    // accommodate bootstrap css source mapping
-    return gulp.src('./bower_components/**/bootstrap.css.map')
-        .pipe(concat('bootstrap.css.map'))
-        .pipe(gulp.dest('public/styles'));
+// vendor css
+gulp.task('vendor-css', ['clean'], function () {
+	return gulp.src('./bower_components/**/*.min.css')
+        .pipe(concat('vendor.min.css'))
+        .pipe(gulp.dest('./build/stylesheets'));
 });
 
-gulp.task('styles', function () {
-    var cssRegex = (/.*\.css$/i);
-
-    return gulp.src(mbf({ filter: cssRegex }))
-        .pipe(concat('vendor.css'))
-        .pipe(gulp.dest('public/styles'));
+// vendor fonts
+gulp.task('fontawesome', ['clean'], function () {
+	return gulp.src('./bower_components/fontawesome/fonts/**/*.{ttf,woff,woff2,eof,svg}')
+		.pipe(gulp.dest('./build/fonts'));
 });
-
-gulp.task('fonts:uigrid', function () {
-    return gulp.src(paths.uigrid)
-        .pipe(gulp.dest('public/styles'));
+gulp.task('ui-grid', ['clean'], function () {
+	return gulp.src('./bower_components/angular-ui-grid/**/*.{ttf,woff,woff2,eof,svg}')
+		.pipe(gulp.dest('./build/stylesheets'));
 });
+gulp.task('vendor-fonts', ['fontawesome', 'ui-grid']);
 
-gulp.task('fonts:fontawesome', function () {
-    return gulp.src(paths.fontawesome)
-        .pipe(gulp.dest('public/fonts'));
-});
+gulp.task('vendor-build', ['vendor-js', 'vendor-css', 'vendor-fonts']);
 
 // app
-gulp.task('app', function () {
-    return gulp.src(paths.scripts)
+var appJs = function () {
+	return gulp.src(paths.scripts)
+        .pipe(sourcemaps.init())
         .pipe(concat('app.js'))
-        .pipe(gulp.dest('public/javascripts'));
-});
+		//.pipe(uglify())
+		//.pipe(rename({ suffix: '.min' }))
+        .pipe(sourcemaps.write())
+        .pipe(connect.reload())
+        .pipe(gulp.dest('./build/scripts'));
+};
+gulp.task('app-js', ['clean'], appJs);
+gulp.task('app-js-watch', appJs);
 
-gulp.task('html', function () {
+var appHtml = function () {
 	return gulp.src(paths.html)
-        .pipe(gulp.dest('public'));
-});
+        .pipe(connect.reload())
+        .pipe(gulp.dest('./build/modules'));
+};
+gulp.task('app-html', ['clean'], appHtml);
+gulp.task('app-html-watch', appHtml);
 
-// styles
-gulp.task('less', function () {
-    return gulp.src(paths.styles)
+var appCss = function () {
+	return gulp.src(paths.styles)
+        .pipe(sourcemaps.init())
         .pipe(less())
-        .pipe(gulp.dest('public/styles'));
-});
+		//.pipe(minifyCss())
+		//.pipe(rename({ suffix: '.min' }))
+        .pipe(sourcemaps.write())
+        .pipe(connect.reload())
+        .pipe(gulp.dest('./build/stylesheets'));
+};
+gulp.task('app-css', ['clean'], appCss);
+gulp.task('app-css-watch', appCss);
+
+gulp.task('app-build', ['app-js', 'app-html', 'app-css']);
 
 // code linting
 gulp.task('lint', function () {
@@ -89,46 +105,38 @@ gulp.task('lint', function () {
 // tests
 gulp.task('test', function (done) {
     karma.start({
-        configFile: __dirname + '/karma.conf.js',
+        configFile: 'karma.conf.js',
         singleRun: true
     }, done);
 });
 
 // dev server
-gulp.task('serve', function () {
-    nodemon({
-        script: 'app.js',
-        env: { 'NODE_ENV': 'development' }
+gulp.task('connect', function () {
+    connect.server({
+        port: 3000,
+        root: 'build',
+        livereload: true
     });
 });
 
-// watch files and livereload
+// watch files
 gulp.task('watch', function () {
-    gulp.watch(paths.html, ['html']);
-    gulp.watch(paths.scripts, ['lint', 'app']);
-    gulp.watch(paths.styles, ['less']);
-    livereload.listen();
-    gulp.watch('public/**').on('change', livereload.changed);
+    gulp.watch(paths.html, ['app-html-watch']);
+    gulp.watch(paths.scripts, ['lint', 'app-js-watch']);
+    gulp.watch(paths.styles, ['app-css-watch']);
 });
 
 // build
-gulp.task('build', ['vendor', 'styles', 'bsmap', 'fonts:uigrid', 'fonts:fontawesome', 'app', 'html', 'less', 'lint']);
+gulp.task('build', ['vendor-build', 'app-build', 'lint'], function () {
+    return gulp.src('app/index.html')
+        .pipe(gulp.dest('build'));
+});
 
 // deploy
 gulp.task('deploy', ['build'], function () {
-    var templateData = {
-        title: 'Lifegroups',
-        body: fs.readFileSync('views/index.handlebars', 'utf-8')
-    };
-
-    gulp.src('public/**/*')
-        .pipe(gulp.dest('dist'));
-
-    return gulp.src('views/layouts/main.handlebars')
-        .pipe(handlebars(templateData))
-        .pipe(rename('index.html'))
+	return gulp.src('./build/**/*')
         .pipe(gulp.dest('dist'));
 });
 
 // default gulp task
-gulp.task('default', ['build', 'serve', 'watch']);
+gulp.task('default', ['build', 'connect', 'watch']);
