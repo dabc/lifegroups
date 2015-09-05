@@ -10,7 +10,7 @@
         'ui.grid.selection'
     ]);
 
-    app.config(function ($routeProvider) {
+    app.config(['$routeProvider', function ($routeProvider) {
         $routeProvider
             .when('/', {
                 controller: 'homeController',
@@ -23,7 +23,7 @@
             .otherwise({
                 redirectTo: '/'
             });
-    })
+    }])
     .value('localStorage', window.localStorage)
     .value('moment', window.moment)
     .value('_', window._);

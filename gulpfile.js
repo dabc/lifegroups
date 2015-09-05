@@ -31,8 +31,8 @@ gulp.task('vendor-js', ['clean'], function () {
 	return gulp.src(mbf({ filter: jsRegex }))
 		.pipe(sourcemaps.init())
         .pipe(concat('vendor.js'))
-		//.pipe(uglify())
-		//.pipe(rename({ suffix: '.min' }))
+		.pipe(uglify())
+		.pipe(rename({ suffix: '.min' }))
 		.pipe(sourcemaps.write())
         .pipe(gulp.dest('./build/scripts'));
 });
@@ -62,8 +62,8 @@ var appJs = function () {
 	return gulp.src(paths.scripts)
         .pipe(sourcemaps.init())
         .pipe(concat('app.js'))
-		//.pipe(uglify())
-		//.pipe(rename({ suffix: '.min' }))
+		.pipe(uglify())
+		.pipe(rename({ suffix: '.min' }))
         .pipe(sourcemaps.write())
         .pipe(connect.reload())
         .pipe(gulp.dest('./build/scripts'));
@@ -83,8 +83,8 @@ var appCss = function () {
 	return gulp.src(paths.styles)
         .pipe(sourcemaps.init())
         .pipe(less())
-		//.pipe(minifyCss())
-		//.pipe(rename({ suffix: '.min' }))
+		.pipe(minifyCss())
+		.pipe(rename({ suffix: '.min' }))
         .pipe(sourcemaps.write())
         .pipe(connect.reload())
         .pipe(gulp.dest('./build/stylesheets'));

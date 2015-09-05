@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('lgApp').controller('homeController', function ($scope, $location, lgService, uiGridConstants, lgConfig, localStorage, moment) {
+    angular.module('lgApp').controller('homeController', ['$scope', '$location', 'lgService', 'uiGridConstants', 'lgConfig', 'localStorage', 'moment', function ($scope, $location, lgService, uiGridConstants, lgConfig, localStorage, moment) {
         var tmpLifegroups = {},
             localLifegroups = localStorage.getItem('lifegroups');
 
@@ -85,5 +85,5 @@
             console.log('lifegroups retrieved from API');
             getLifegroups();
         }
-    });
+    }]);
 })();
