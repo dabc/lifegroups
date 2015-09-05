@@ -9,7 +9,8 @@ var gulp = require('gulp'),
     del = require('del'),
 	uglify = require('gulp-uglify'),
 	minifyCss = require('gulp-minify-css'),
-	rename = require('gulp-rename');
+	rename = require('gulp-rename'),
+	ngAnnotate = require('gulp-ng-annotate');
 
 var paths = {
     styles: ['./app/stylesheets/*.less'],
@@ -62,6 +63,7 @@ var appJs = function () {
 	return gulp.src(paths.scripts)
         .pipe(sourcemaps.init())
         .pipe(concat('app.js'))
+		.pipe(ngAnnotate({ single_quotes: true }))
 		.pipe(uglify())
 		.pipe(rename({ suffix: '.min' }))
         .pipe(sourcemaps.write())

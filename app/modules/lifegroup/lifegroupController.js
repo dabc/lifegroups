@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('lgApp').controller('lifegroupController', ['$scope', '$routeParams', '$location', 'lgService', function ($scope, $routeParams, $location, lgService) {
+    angular.module('lgApp').controller('lifegroupController', function ($scope, $routeParams, $location, lgService) {
         var tmpLifegroup = {},
             localLifegroup = window.localStorage.getItem($routeParams.slug);
 
@@ -47,5 +47,5 @@
         $scope.navigateHome = function () {
             $location.path('/');
         };
-    }]);
+    });
 })();

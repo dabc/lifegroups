@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('lgApp').service('lgService', ['$http', function ($http) {
+    angular.module('lgApp').service('lgService', function ($http) {
         var baseUrl = 'http://daytonave.org/api',
             currLifegroup = {};
 
@@ -21,5 +21,5 @@
         this.getLifegroupBySlug = function (slug) {
             return $http.get(baseUrl + '/get_page/?slug=lifegroups/' + slug);
         };
-    }]);
+    });
 })();
