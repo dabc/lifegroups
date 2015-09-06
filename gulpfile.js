@@ -113,7 +113,7 @@ gulp.task('test', function (done) {
 });
 
 // dev server
-gulp.task('connect', function () {
+gulp.task('connect', ['build'], function () {
     connect.server({
         port: 3000,
         root: 'build',
@@ -122,7 +122,7 @@ gulp.task('connect', function () {
 });
 
 // watch files
-gulp.task('watch', function () {
+gulp.task('watch', ['connect'], function () {
     gulp.watch(paths.html, ['app-html-watch']);
     gulp.watch(paths.scripts, ['lint', 'app-js-watch']);
     gulp.watch(paths.styles, ['app-css-watch']);
