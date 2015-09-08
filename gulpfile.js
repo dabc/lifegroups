@@ -30,11 +30,9 @@ gulp.task('clean', function () {
 gulp.task('vendor-js', ['clean'], function () {
 	var jsRegex = (/.*\.js$/i);
 	return gulp.src(mbf({ filter: jsRegex }))
-		.pipe(sourcemaps.init())
         .pipe(concat('vendor.js'))
 		.pipe(uglify())
 		.pipe(rename({ suffix: '.min' }))
-		.pipe(sourcemaps.write())
         .pipe(gulp.dest('./build/scripts'));
 });
 
