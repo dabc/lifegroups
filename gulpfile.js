@@ -99,7 +99,7 @@ gulp.task('app-build', ['app-js', 'app-html', 'app-css']);
 // code linting
 gulp.task('lint', function () {
     return gulp.src(paths.scripts)
-        .pipe(jshint(process.env.NODE_ENV === 'development' ? { devel: true, debug: true } : {} ))
+        .pipe(jshint({ devel: true, debug: true }))
         .pipe(jshint.reporter('jshint-stylish'))
         .pipe(jshint.reporter('fail'));
 });

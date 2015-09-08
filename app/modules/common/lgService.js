@@ -1,21 +1,23 @@
 (function () {
     'use strict';
 
-    angular.module('lgApp').service('lgService', function ($http) {
+    angular.module('lgApp').service('lgService', function ($http, $q) {
         var baseUrl = 'http://daytonave.org/api',
             currLifegroup = {};
 
         this.getLifegroups = function () {
-            var lifegroups = [];
-            return $http.get(baseUrl + '/get_posts/?post_type=page').then(function (res) {
-                var pages = res.data;
-                _.forEach(pages.posts, function (page) {
+            var d = $q.defer(),
+                lifegroups = [];
+            $http.get(baseUrl + '/get_posts/?post_type=page').success(function (res) {
+                var pages = res.posts;
+                _.forEach(pages, function (page) {
                     if (page.custom_fields.isLifegroup) {
                         lifegroups.push(page);
                     }
                 });
-                return lifegroups;
+                d.resolve(lifegroups);
             });
+            return d.promise;
         };
 
         this.getLifegroupBySlug = function (slug) {

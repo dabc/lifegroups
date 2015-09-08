@@ -46,9 +46,11 @@
                     slug: group.slug
                 });
             });
+            $scope.contentReady = true;
         };
 
         var getLifegroups = function () {
+            $scope.contentReady = false;
             lgService.getLifegroups().then(function (lifegroups) {
                 $scope.lifegroups = lifegroups;
                 var data = {
@@ -57,11 +59,10 @@
                 };
                 localStorage.setItem('lifegroups', JSON.stringify(data));
                 formatData();
-                $scope.contentReady = true;
             });
         };
 
-        if (localLifegroups) {
+        if (localLifegroups && !$scope.contentReady) {
             try {
                 tmpLifegroups = JSON.parse(localLifegroups);
                 var duration = moment.utc().diff(moment.utc(tmpLifegroups.timeStamp));
@@ -70,16 +71,14 @@
                     localStorage.removeItem('lifegroups');
                     getLifegroups();
                 } else {
-                    $scope.lifegroups = tmpLifegroups.data;
                     console.log('lifegroups retrieved from local storage');
+                    $scope.lifegroups = tmpLifegroups.data;
+                    formatData();
                 }
-                formatData();
             } catch (error) {
                 console.log('Error parsing lifegroups. Retrieving from API');
                 localStorage.removeItem('lifegroups');
                 getLifegroups();
-            } finally {
-                $scope.contentReady = true;
             }
         } else {
             console.log('lifegroups retrieved from API');
