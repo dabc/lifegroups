@@ -10,7 +10,7 @@
 
         var getLifegroup = function () {
             lgService.getLifegroupBySlug($routeParams.slug).then(function (lifegroup) {
-                $scope.lifegroup = lifegroup.data.page;
+                $scope.lifegroup = lifegroup.page;
                 var data = {
                     timeStamp: moment.utc().toDate(),
                     data: lifegroup
@@ -29,15 +29,14 @@
                     window.localStorage.removeItem($routeParams.slug);
                     getLifegroup();
                 } else {
-                    $scope.lifegroup = tmpLifegroup.data.data.page;
+                    $scope.lifegroup = tmpLifegroup.data.page;
+                    $scope.contentReady = true;
                     console.log('lifegroup retrieved from local storage');
                 }
             } catch (error) {
                 console.log('Error parsing lifegroup. Retrieving from API');
                 window.localStorage.removeItem($routeParams.slug);
                 getLifegroup();
-            } finally {
-                $scope.contentReady = true;
             }
         } else {
             console.log('lifegroup retrieved from API');

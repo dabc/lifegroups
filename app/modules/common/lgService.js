@@ -21,7 +21,11 @@
         };
 
         this.getLifegroupBySlug = function (slug) {
-            return $http.get(baseUrl + '/get_page/?slug=lifegroups/' + slug);
+            var d = $q.defer();
+            $http.get(baseUrl + '/get_page/?slug=lifegroups/' + slug).success(function (res) {
+                d.resolve(res);
+            });
+            return d.promise;
         };
     });
 })();
