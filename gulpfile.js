@@ -31,8 +31,6 @@ gulp.task('vendor-js', ['clean'], function () {
 	var jsRegex = (/.*\.js$/i);
 	return gulp.src(mbf({ filter: jsRegex }))
         .pipe(concat('vendor.js'))
-		.pipe(uglify())
-		.pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest('./build/scripts'));
 });
 
@@ -59,12 +57,8 @@ gulp.task('vendor-build', ['vendor-js', 'vendor-css', 'vendor-fonts']);
 // app
 var appJs = function () {
 	return gulp.src(paths.scripts)
-        .pipe(sourcemaps.init())
         .pipe(concat('app.js'))
 		.pipe(ngAnnotate({ single_quotes: true }))
-		.pipe(uglify())
-		.pipe(rename({ suffix: '.min' }))
-        .pipe(sourcemaps.write())
         .pipe(connect.reload())
         .pipe(gulp.dest('./build/scripts'));
 };
@@ -81,11 +75,7 @@ gulp.task('app-html-watch', appHtml);
 
 var appCss = function () {
 	return gulp.src(paths.styles)
-        .pipe(sourcemaps.init())
         .pipe(less())
-		.pipe(minifyCss())
-		.pipe(rename({ suffix: '.min' }))
-        .pipe(sourcemaps.write())
         .pipe(connect.reload())
         .pipe(gulp.dest('./build/stylesheets'));
 };
@@ -101,6 +91,30 @@ gulp.task('lint', function () {
         .pipe(jshint.reporter('jshint-stylish'))
         .pipe(jshint.reporter('fail'));
 });
+
+// uglify
+gulp.task('uglify-vendor-js', ['build'], function () {
+	gulp.src('./build/scripts/vendor.js')
+		.pipe(uglify())
+		.pipe(gulp.dest('./build/scripts'));
+});
+
+gulp.task('uglify-app-js', ['build'], function () {
+	gulp.src('./build/scripts/app.js')
+		.pipe(sourcemaps.init())
+		.pipe(uglify())
+        .pipe(sourcemaps.write())
+		.pipe(gulp.dest('./build/scripts'));
+});
+
+gulp.task('uglify-app-css', ['build'], function () {
+	gulp.src('./build/stylesheets/style.css')
+		.pipe(sourcemaps.init())
+		.pipe(minifyCss())
+		.pipe(sourcemaps.write())
+		.pipe(gulp.dest('./build/stylesheets'));
+});
+gulp.task('uglify', ['uglify-vendor-js', 'uglify-app-js', 'uglify-app-css']);
 
 // tests
 gulp.task('test', function (done) {
@@ -128,12 +142,12 @@ gulp.task('watch', ['connect'], function () {
 
 // build
 gulp.task('build', ['vendor-build', 'app-build', 'lint'], function () {
-    return gulp.src('app/index.html')
+    return gulp.src('./app/index.html')
         .pipe(gulp.dest('build'));
 });
 
 // deploy
-gulp.task('deploy', ['build'], function () {
+gulp.task('deploy', ['build', 'uglify'], function () {
 	return gulp.src('./build/**/*')
         .pipe(gulp.dest('dist'));
 });

@@ -8,7 +8,7 @@
         this.getLifegroups = function () {
             var d = $q.defer(),
                 lifegroups = [];
-            $http.get(baseUrl + '/get_posts/?post_type=page').success(function (res) {
+            $http.get(baseUrl + '/get_posts/?post_type=page&count=100').success(function (res) {
                 var pages = res.posts;
                 _.forEach(pages, function (page) {
                     if (page.custom_fields.isLifegroup) {
