@@ -148,8 +148,10 @@ gulp.task('build', ['vendor-build', 'app-build', 'lint'], function () {
 
 // deploy
 gulp.task('deploy', ['build', 'uglify'], function () {
-	return gulp.src('./build/**/*')
-        .pipe(gulp.dest('dist'));
+	del(['./dist/**/*']).then(function () {
+		return gulp.src('./build/**/*')
+	        .pipe(gulp.dest('dist'));
+	});
 });
 
 // default gulp task
